@@ -1,0 +1,2822 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expedição ao Deserto</title>
+
+<style>
+*{box-sizing:border-box}
+
+html{
+  scroll-behavior:smooth
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:linear-gradient(135deg,#f8e7bd,#fff7df);
+  color:#3b2a1d;
+  overflow-x:hidden
+}
+
+button{
+  font:inherit;
+  cursor:pointer
+}
+
+#progressTop{
+  position:fixed;
+  top:0;
+  left:0;
+  height:6px;
+  width:0;
+  background:#d97932;
+  z-index:9999;
+  transition:.3s
+}
+
+.book{
+  width:min(1000px,94%);
+  margin:35px auto 30px;
+  perspective:1400px
+}
+
+.page{
+  display:none;
+  min-height:700px;
+  background:#fffdf6;
+  border:5px solid #7b5135;
+  border-radius:20px;
+  box-shadow:0 15px 40px #0002;
+  overflow:hidden;
+  position:relative
+}
+
+.page.active{
+  display:block;
+  animation:pageIn .45s ease
+}
+
+@keyframes pageIn{
+  from{
+    opacity:0;
+    transform:rotateY(-8deg) translateX(15px)
+  }
+  to{
+    opacity:1;
+    transform:none
+  }
+}
+
+/* CAPA */
+
+.cover{
+  min-height:700px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  background:
+    radial-gradient(circle at 50% 20%,#ffe9a9,#eab86c 55%,#b96d3c);
+  padding:25px
+}
+
+.cover h1{
+  font-size:clamp(2.5rem,7vw,5rem);
+  margin:10px 0;
+  color:#51301c;
+  text-shadow:2px 3px #fff6
+}
+
+.cover p{
+  font-size:1.2rem;
+  max-width:650px;
+  line-height:1.7
+}
+
+.start{
+  background:#fff;
+  color:#74451f;
+  border:0;
+  padding:16px 30px;
+  border-radius:50px;
+  font-weight:bold;
+  font-size:1.1rem;
+  box-shadow:0 8px 20px #0003
+}
+
+/* CABEÇALHO */
+
+.header{
+  padding:28px 35px 15px;
+  background:linear-gradient(90deg,#f5d58d,#fff4cf);
+  border-bottom:2px solid #d7a35d
+}
+
+.badge{
+  display:inline-block;
+  background:#76502f;
+  color:white;
+  border-radius:30px;
+  padding:7px 13px;
+  font-size:.85rem
+}
+
+h2{
+  font-size:clamp(1.8rem,4vw,2.8rem);
+  margin:12px 0 5px;
+  color:#70451f
+}
+
+.subtitle{
+  margin:0;
+  color:#775f4a
+}
+
+.content{
+  padding:25px 35px 90px
+}
+
+.text{
+  font-size:1.08rem;
+  line-height:1.8;
+  margin:0 0 18px;
+  text-align:justify
+}
+
+/* CARDS */
+
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  margin:20px 0
+}
+
+.card{
+  background:#fff4d5;
+  border:2px solid #e3b86c;
+  border-radius:16px;
+  padding:18px;
+  transition:.25s;
+  box-shadow:0 5px 14px #0001
+}
+
+.card:hover{
+  transform:translateY(-4px)
+}
+
+.card h3{
+  margin:0 0 8px;
+  color:#74451f
+}
+
+/* INTERAÇÕES */
+
+.interactive{
+  background:linear-gradient(135deg,#f7e0aa,#fff8e5);
+  border:2px dashed #bc7a3e;
+  border-radius:18px;
+  padding:20px;
+  margin:20px 0
+}
+
+.interactive h3{
+  margin-top:0
+}
+
+.action{
+  border:0;
+  border-radius:12px;
+  padding:12px 18px;
+  background:#85552f;
+  color:#fff;
+  font-weight:bold;
+  margin:5px
+}
+
+.action.secondary{
+  background:#d88a3d
+}
+
+.result{
+  margin-top:12px;
+  background:#fff;
+  padding:13px;
+  border-radius:12px;
+  min-height:45px;
+  line-height:1.5
+}
+
+/* DIA E NOITE */
+
+.daynight{
+  height:210px;
+  border-radius:18px;
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(#6dc8ef,#f7d58a);
+  transition:1s
+}
+
+.daynight.night{
+  background:linear-gradient(#101c48,#29386e)
+}
+
+.sunmoon{
+  position:absolute;
+  font-size:65px;
+  left:50%;
+  top:35px;
+  transform:translateX(-50%);
+  transition:1s
+}
+
+.night .sunmoon{
+  transform:translateX(-50%) translateY(45px);
+  font-size:52px
+}
+
+.ground{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:45px;
+  background:#d9a05d
+}
+
+/* TERMÔMETRO */
+
+.thermo{
+  margin-top:18px
+}
+
+.thermo-bar{
+  height:22px;
+  background:#eee;
+  border-radius:20px;
+  overflow:hidden
+}
+
+.thermo-fill{
+  height:100%;
+  width:85%;
+  background:#d95432;
+  transition:.7s
+}
+
+/* MAPA */
+
+.map{
+  background:#dceef3;
+  border-radius:18px;
+  border:2px solid #82aeb8;
+  padding:12px;
+  position:relative
+}
+
+.map svg{
+  display:block;
+  width:100%;
+  height:auto
+}
+
+.mapLand{
+  fill:#ead5a0;
+  stroke:#8a6b48;
+  stroke-width:2
+}
+
+.mapDesert{
+  fill:#d89245;
+  stroke:#9b6028;
+  stroke-width:2;
+  cursor:pointer
+}
+
+.mapPoint{
+  fill:#3186b5;
+  stroke:white;
+  stroke-width:3;
+  cursor:pointer
+}
+
+.mapText{
+  font:700 14px Arial;
+  fill:#51301c;
+  pointer-events:none
+}
+
+.mapHint{
+  text-align:center;
+  font-weight:bold;
+  margin:8px
+}
+
+.explore{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:12px
+}
+
+.mini-progress{
+  height:10px;
+  background:#eee;
+  border-radius:20px;
+  overflow:hidden;
+  flex:1
+}
+
+.mini-fill{
+  height:100%;
+  width:0;
+  background:#3186b5;
+  transition:.4s
+}
+
+/* ILUSTRAÇÕES */
+
+.illus{
+  display:block;
+  width:100%;
+  height:auto
+}
+
+.cover-illus{
+  width:min(430px,82vw);
+  margin-bottom:8px;
+  filter:drop-shadow(0 12px 12px #0002)
+}
+
+.section-illus{
+  width:min(230px,65vw);
+  margin:4px auto 16px
+}
+
+.card-illus{
+  width:58px;
+  height:58px;
+  float:left;
+  margin:0 10px 6px 0
+}
+
+.daynight-illus{
+  position:absolute;
+  width:110px;
+  height:110px;
+  left:50%;
+  top:20px;
+  transform:translateX(-50%);
+  transition:1s
+}
+
+.night .daynight-illus{
+  transform:translateX(-50%) translateY(42px)
+}
+
+.camel-illus{
+  width:min(330px,80vw);
+  margin:0 auto;
+  display:block;
+  cursor:pointer;
+  transition:.25s
+}
+
+.camel-illus:hover{
+  transform:scale(1.03)
+}
+
+.cactus-illus{
+  width:170px;
+  height:220px;
+  margin:0 auto;
+  display:block;
+  cursor:pointer
+}
+
+.animals-illus{
+  width:min(360px,90vw);
+  height:130px;
+  margin:0 auto 8px;
+  display:block
+}
+
+/* ANIMAIS */
+
+.animal-scene{
+  min-height:180px;
+  border-radius:18px;
+  padding:20px;
+  text-align:center;
+  background:#f4d59a;
+  transition:.7s;
+  font-size:4rem
+}
+
+.animal-scene.night{
+  background:#202d5d
+}
+
+.animal-text{
+  font-size:1rem;
+  color:#3b2a1d
+}
+
+.night .animal-text{
+  color:white
+}
+
+/* CAMEL */
+
+.camel{
+  font-size:6rem;
+  text-align:center;
+  cursor:pointer;
+  transition:.25s
+}
+
+.camel:hover{
+  transform:scale(1.08)
+}
+
+.tip{
+  background:#e9f4e2;
+  border-left:6px solid #5f9c55;
+  padding:15px;
+  border-radius:10px;
+  margin:15px 0;
+  line-height:1.6
+}
+
+/* QUIZ */
+
+.quiz{
+  padding-bottom:120px
+}
+
+.question{
+  background:#fff7e6;
+  border:2px solid #e3b86c;
+  border-radius:16px;
+  padding:18px;
+  margin:16px 0
+}
+
+.question h3{
+  margin-top:0
+}
+
+.option{
+  display:block;
+  width:100%;
+  text-align:left;
+  margin:8px 0;
+  padding:12px;
+  border:2px solid #d7b27a;
+  border-radius:10px;
+  background:white
+}
+
+.option:hover{
+  background:#fff0cc
+}
+
+.option.correct{
+  background:#dff2df;
+  border-color:#4d9952
+}
+
+.option.wrong{
+  background:#f7dada;
+  border-color:#c65555
+}
+
+.quizbar{
+  height:12px;
+  background:#eee;
+  border-radius:20px;
+  overflow:hidden;
+  margin:10px 0 20px
+}
+
+.quizbar div{
+  height:100%;
+  width:0;
+  background:#d97932;
+  transition:.3s
+}
+
+.score{
+  display:none;
+  text-align:center;
+  background:#fff0bd;
+  border:3px solid #d99542;
+  border-radius:18px;
+  padding:25px;
+  margin-top:25px
+}
+
+.stars{
+  font-size:2rem
+}
+
+/* NAVEGAÇÃO */
+
+.nav{
+  position:absolute;
+  bottom:18px;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:space-between;
+  padding:0 25px
+}
+
+.nav button{
+  border:0;
+  background:#70451f;
+  color:#fff;
+  border-radius:30px;
+  padding:12px 20px;
+  font-weight:bold
+}
+
+.nav button:disabled{
+  opacity:.35
+}
+
+/* SOM */
+
+.sound{
+  position:fixed;
+  right:16px;
+  top:18px;
+  z-index:1000;
+  border:0;
+  background:#70451f;
+  color:#fff;
+  border-radius:50%;
+  width:60px;
+  height:48px;
+  box-shadow:0 4px 12px #0003;
+  font-size:.75rem;
+  font-weight:bold
+}
+
+/* TOAST */
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:25px;
+  transform:translate(-50%,30px);
+  background:#3d2b20;
+  color:white;
+  padding:13px 18px;
+  border-radius:12px;
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
+  z-index:9998;
+  text-align:center
+}
+
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0)
+}
+
+/* RODAPÉ */
+
+footer{
+  text-align:center;
+  background:#553722;
+  color:white;
+  padding:25px;
+  font-weight:bold;
+  line-height:1.8
+}
+
+/* CELULAR */
+
+@media(max-width:700px){
+
+  .page{
+    min-height:760px
+  }
+
+  .content{
+    padding:20px 18px 90px
+  }
+
+  .header{
+    padding:23px 18px 12px
+  }
+
+  .info-grid{
+    grid-template-columns:1fr
+  }
+
+  .text{
+    font-size:1rem;
+    text-align:left;
+    line-height:1.7
+  }
+
+  .cover{
+    min-height:760px;
+    padding:25px
+  }
+
+  .nav{
+    padding:0 12px
+  }
+
+  .nav button{
+    padding:10px 13px;
+    font-size:.85rem
+  }
+
+  .mapText{
+    font-size:11px
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="progressTop"></div>
+
+<button
+  class="sound"
+  id="soundBtn"
+  onclick="toggleSound()"
+  aria-label="Som ambiente">
+  SOM
+</button>
+
+<div class="book">
+
+<!-- =====================================================
+     CAPA
+===================================================== -->
+
+<section class="page active" id="page0">
+
+  <div class="cover">
+
+    <!-- ILUSTRAÇÃO DA CAPA -->
+    <svg
+      class="illus cover-illus"
+      viewBox="0 0 700 280"
+      role="img"
+      aria-label="Ilustração de deserto com dunas, cactos e sol">
+
+      <circle
+        cx="560"
+        cy="78"
+        r="48"
+        fill="#f5b83d"/>
+
+      <path
+        d="M0 225 Q160 120 330 210 T700 185 V280 H0Z"
+        fill="#d58b43"/>
+
+      <path
+        d="M0 250 Q190 175 390 235 T700 215 V280 H0Z"
+        fill="#efbd69"/>
+
+      <g fill="#4d9a55">
+
+        <path
+          d="M105 220V125c0-13 9-22 20-22s20 9 20 22v20h18v-30c0-10 8-18 18-18s18 8 18 18v48c0 12-9 21-21 21h-15v36h-38v-40h-20z"/>
+
+        <path
+          d="M600 225v-92c0-11 8-19 19-19s19 8 19 19v18h15v-25c0-9 7-16 16-16s16 7 16 16v38c0 11-8 19-19 19h-12v42z"/>
+
+      </g>
+
+      <g
+        fill="none"
+        stroke="#4d9a55"
+        stroke-width="4"
+        opacity=".8">
+
+        <path d="M118 145l-8 0"/>
+        <path d="M146 164l9 0"/>
+        <path d="M118 180l-8 0"/>
+        <path d="M615 151l-9 0"/>
+        <path d="M646 174l10 0"/>
+
+      </g>
+
+    </svg>
+
+    <h1>EXPEDIÇÃO AO DESERTO</h1>
+
+    <p>
+      Uma viagem interativa para conhecer o clima,
+      as temperaturas, o Saara, as adaptações dos
+      seres vivos e os camelos.
+    </p>
+
+    <p>
+      <strong>esse trabalho foi feito por luiz e carlos</strong>
+    </p>
+
+    <button
+      class="start"
+      onclick="goTo(1)">
+      ABRIR O LIVRO
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     SEÇÃO 1
+===================================================== -->
+
+<section class="page" id="page1">
+
+  <div class="header">
+
+    <span class="badge">
+      SEÇÃO 1/5 • CLIMA
+    </span>
+
+    <h2>
+      O clima dos desertos
+    </h2>
+
+    <p class="subtitle">
+      Pouca chuva, pouca umidade e muita radiação solar.
+    </p>
+
+  </div>
+
+  <div class="content">
+
+    <p class="text">
+      Os desertos podem ser encontrados em todos os continentes,
+      com exceção da Antártida. Eles apresentam condições ambientais
+      extremas por causa do clima desértico. Uma das principais
+      características desses lugares é a pequena quantidade de chuva:
+      os índices de precipitação podem chegar a apenas
+      <strong>200 mm ao longo do ano</strong>.
+    </p>
+
+    <p class="text">
+      Além da pouca chuva, o ar dos desertos possui baixa umidade.
+      Com menos umidade, também há pouca formação de nuvens.
+      Assim, durante o dia, a radiação solar consegue atingir
+      o solo diretamente, sem ser muito "filtrada" pelas nuvens
+      e pela umidade do ar.
+    </p>
+
+
+    <div class="info-grid">
+
+      <!-- CHUVA -->
+
+      <div
+        class="card"
+        onclick="showInfo('chuva')">
+
+        <svg
+          class="card-illus"
+          viewBox="0 0 64 64">
+
+          <path
+            d="M32 8c8 12 18 22 18 33a18 18 0 1 1-36 0C14 30 24 20 32 8z"
+            fill="#4c9dcc"/>
+
+          <path
+            d="M26 41c2 5 5 7 9 8"
+            fill="none"
+            stroke="#fff"
+            stroke-width="3"
+            stroke-linecap="round"/>
+
+        </svg>
+
+        <h3>Chuva</h3>
+
+        <p>
+          Toque para descobrir o que torna a chuva
+          nos desertos tão diferente.
+        </p>
+
+      </div>
+
+
+      <!-- UMIDADE -->
+
+      <div
+        class="card"
+        onclick="showInfo('umidade')">
+
+        <svg
+          class="card-illus"
+          viewBox="0 0 64 64">
+
+          <path
+            d="M32 7c9 14 19 24 19 36a19 19 0 1 1-38 0C13 31 23 21 32 7z"
+            fill="#67b7d8"/>
+
+          <circle
+            cx="25"
+            cy="40"
+            r="4"
+            fill="#fff"
+            opacity=".8"/>
+
+        </svg>
+
+        <h3>Umidade</h3>
+
+        <p>
+          A quantidade de umidade no ar é muito baixa.
+        </p>
+
+      </div>
+
+
+      <!-- NUVENS -->
+
+      <div
+        class="card"
+        onclick="showInfo('nuvens')">
+
+        <svg
+          class="card-illus"
+          viewBox="0 0 64 64">
+
+          <path
+            d="M15 46h35a10 10 0 0 0 0-20 16 16 0 0 0-30-2 11 11 0 0 0-5 22z"
+            fill="#d7e4ea"
+            stroke="#7096a3"
+            stroke-width="3"/>
+
+        </svg>
+
+        <h3>Nuvens</h3>
+
+        <p>
+          A baixa umidade contribui para a pouca
+          formação de nuvens.
+        </p>
+
+      </div>
+
+
+      <!-- RADIAÇÃO -->
+
+      <div
+        class="card"
+        onclick="showInfo('radiacao')">
+
+        <svg
+          class="card-illus"
+          viewBox="0 0 64 64">
+
+          <circle
+            cx="32"
+            cy="32"
+            r="12"
+            fill="#f4b93f"/>
+
+          <g
+            stroke="#e09b2d"
+            stroke-width="4"
+            stroke-linecap="round">
+
+            <path d="M32 6v9"/>
+            <path d="M32 49v9"/>
+            <path d="M6 32h9"/>
+            <path d="M49 32h9"/>
+            <path d="M14 14l6 6"/>
+            <path d="M44 44l6 6"/>
+            <path d="M50 14l-6 6"/>
+            <path d="M20 44l-6 6"/>
+
+          </g>
+
+        </svg>
+
+        <h3>Radiação</h3>
+
+        <p>
+          A radiação solar alcança o solo diretamente
+          durante o dia.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="interactive">
+
+      <h3>Descubra</h3>
+
+      <div
+        class="result"
+        id="climateResult">
+
+        Clique em um dos cartões acima.
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="nav">
+
+    <button disabled>
+      VOLTAR
+    </button>
+
+    <button onclick="goTo(2)">
+      PRÓXIMA SEÇÃO
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     SEÇÃO 2
+===================================================== -->
+
+<section class="page" id="page2">
+
+  <div class="header">
+
+    <span class="badge">
+      SEÇÃO 2/5 • TEMPERATURA
+    </span>
+
+    <h2>
+      Um deserto pode ser muito quente e muito frio
+    </h2>
+
+    <p class="subtitle">
+      A diferença entre o dia e a noite é uma das características marcantes.
+    </p>
+
+  </div>
+
+
+  <div class="content">
+
+    <p class="text">
+      Durante o dia, os desertos podem atingir temperaturas médias
+      de aproximadamente <strong>50 °C</strong>. A forte presença
+      da radiação solar contribui para o aquecimento do solo
+      e do ambiente.
+    </p>
+
+    <p class="text">
+      Durante a noite, acontece o contrário. Como há pouca umidade
+      no ar, uma grande quantidade de calor pode se perder para
+      a atmosfera. Por isso, a temperatura pode diminuir bastante
+      e chegar a <strong>0 °C ou menos</strong>.
+    </p>
+
+
+    <div class="interactive">
+
+      <h3>Dia ou noite?</h3>
+
+      <div
+        class="daynight"
+        id="scene">
+
+        <svg
+          class="daynight-illus"
+          id="sunmoon"
+          viewBox="0 0 120 120"
+          aria-label="Sol">
+
+          <circle
+            cx="60"
+            cy="60"
+            r="25"
+            fill="#f5b83d"/>
+
+          <g
+            stroke="#e09b2d"
+            stroke-width="6"
+            stroke-linecap="round">
+
+            <path d="M60 8v18"/>
+            <path d="M60 94v18"/>
+            <path d="M8 60h18"/>
+            <path d="M94 60h18"/>
+            <path d="M23 23l13 13"/>
+            <path d="M84 84l13 13"/>
+            <path d="M97 23L84 36"/>
+            <path d="M36 84L23 97"/>
+
+          </g>
+
+        </svg>
+
+        <div class="ground"></div>
+
+      </div>
+
+
+      <button
+        class="action"
+        onclick="toggleDay()">
+
+        MUDAR PARA NOITE/DIA
+
+      </button>
+
+
+      <button
+        class="action secondary"
+        onclick="showTemp()">
+
+        VER A DIFERENÇA
+
+      </button>
+
+
+      <div
+        class="result"
+        id="tempResult">
+
+        Durante o dia, a temperatura média pode chegar
+        a cerca de 50 °C.
+
+      </div>
+
+
+      <div class="thermo">
+
+        <div class="thermo-bar">
+
+          <div
+            class="thermo-fill"
+            id="thermoFill">
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="nav">
+
+    <button onclick="goTo(1)">
+      VOLTAR
+    </button>
+
+    <button onclick="goTo(3)">
+      PRÓXIMA SEÇÃO
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     SEÇÃO 3
+===================================================== -->
+
+<section class="page" id="page3">
+
+  <div class="header">
+
+    <span class="badge">
+      SEÇÃO 3/5 • SAARA
+    </span>
+
+    <h2>
+      Conhecendo o Saara
+    </h2>
+
+    <p class="subtitle">
+      Uma das grandes regiões desérticas do planeta.
+    </p>
+
+  </div>
+
+
+  <div class="content">
+
+    <p class="text">
+      O <strong>Saara é o maior deserto do mundo</strong>.
+      Ele se estende por uma grande área da África, desde
+      a faixa atlântica até a direção da península Arábica,
+      formando uma enorme região de condições desérticas.
+    </p>
+
+    <p class="text">
+      No mapa abaixo, você pode explorar alguns pontos relacionados
+      ao texto. Toque nas áreas indicadas para descobrir informações
+      e acompanhar sua exploração.
+    </p>
+
+
+    <div class="map">
+
+      <svg
+        viewBox="0 0 800 430"
+        role="img"
+        aria-label="Mapa esquemático do norte da África e região da península Arábica">
+
+        <path
+          class="mapLand"
+          d="M65 110 Q160 55 280 70 Q370 40 475 80 Q565 60 665 115 L735 205 Q685 255 620 245 Q575 290 510 280 Q445 320 370 300 Q300 340 225 300 Q150 285 90 230 Q50 175 65 110Z"/>
+
+        <path
+          class="mapLand"
+          d="M650 205 Q725 175 775 215 L750 300 Q690 325 635 280Z"/>
+
+        <path
+          class="mapDesert"
+          d="M170 130 Q260 90 375 115 Q480 95 570 135 L610 210 Q530 245 435 225 Q330 255 245 220 Q180 205 170 130Z"
+          onclick="mapPoint('saara')"/>
+
+        <circle
+          class="mapPoint"
+          cx="150"
+          cy="185"
+          r="11"
+          onclick="mapPoint('atlantico')"/>
+
+        <circle
+          class="mapPoint"
+          cx="690"
+          cy="245"
+          r="11"
+          onclick="mapPoint('arabia')"/>
+
+        <text
+          class="mapText"
+          x="325"
+          y="170">
+          SAARA
+        </text>
+
+        <text
+          class="mapText"
+          x="83"
+          y="215">
+          ATLÂNTICO
+        </text>
+
+        <text
+          class="mapText"
+          x="665"
+          y="275">
+          ARÁBICA
+        </text>
+
+        <text
+          class="mapText"
+          x="665"
+          y="75">
+          N
+        </text>
+
+      </svg>
+
+
+      <div class="mapHint">
+        Toque no Saara ou nos pontos azuis.
+      </div>
+
+
+      <div class="explore">
+
+        <span>
+          Exploração
+        </span>
+
+        <div class="mini-progress">
+
+          <div
+            class="mini-fill"
+            id="mapProgress">
+          </div>
+
+        </div>
+
+        <b id="mapCount">
+          0/3
+        </b>
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="result"
+      id="saharaInfo">
+
+      Comece explorando o mapa.
+
+    </div>
+
+
+    <div class="tip">
+
+      <strong>Você sabia?</strong>
+
+      <br>
+
+      O nome "Saara" aparece como destaque porque ele
+      é apresentado no conteúdo como o maior deserto
+      do mundo.
+
+    </div>
+
+  </div>
+
+
+  <div class="nav">
+
+    <button onclick="goTo(2)">
+      VOLTAR
+    </button>
+
+    <button onclick="goTo(4)">
+      PRÓXIMA SEÇÃO
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     SEÇÃO 4
+===================================================== -->
+
+<section class="page" id="page4">
+
+  <div class="header">
+
+    <span class="badge">
+      SEÇÃO 4/5 • ADAPTAÇÕES
+    </span>
+
+    <h2>
+      Como a vida sobrevive no deserto?
+    </h2>
+
+    <p class="subtitle">
+      Plantas e animais possuem adaptações para lidar com a falta de água.
+    </p>
+
+  </div>
+
+
+  <div class="content">
+
+    <p class="text">
+      Mesmo com condições difíceis, a flora e a fauna dos desertos
+      conseguem sobreviver graças a diferentes adaptações.
+      Os <strong>cactos</strong> são um exemplo conhecido:
+      suas folhas foram modificadas e transformadas em espinhos.
+      Essa característica ajuda a reduzir a perda de água
+      por meio da transpiração.
+    </p>
+
+    <p class="text">
+      Os cactos também possuem <strong>caules suculentos</strong>,
+      capazes de armazenar água. Os animais apresentam outras
+      estratégias. Alguns vivem em tocas ou permanecem enterrados,
+      enquanto outros têm hábitos noturnos e saem em busca
+      de alimento durante a noite, quando as condições são
+      mais favoráveis.
+    </p>
+
+    <p class="text">
+      Outra adaptação citada no conteúdo está relacionada à urina:
+      ela é muito concentrada, pois contém uma quantidade mínima
+      de água. Isso ajuda os animais a economizarem água em um
+      ambiente onde esse recurso é limitado.
+    </p>
+
+
+    <!-- CACTO -->
+
+    <div class="interactive">
+
+      <h3>
+        Toque no cacto
+      </h3>
+
+
+      <svg
+        class="cactus-illus"
+        onclick="cactusTip()"
+        viewBox="0 0 170 220"
+        role="img"
+        aria-label="Cacto ilustrado">
+
+        <g
+          fill="#4d9a55"
+          stroke="#34753d"
+          stroke-width="3">
+
+          <rect
+            x="58"
+            y="20"
+            width="54"
+            height="185"
+            rx="27"/>
+
+          <rect
+            x="20"
+            y="86"
+            width="55"
+            height="34"
+            rx="17"/>
+
+          <rect
+            x="12"
+            y="66"
+            width="30"
+            height="66"
+            rx="15"/>
+
+          <rect
+            x="95"
+            y="112"
+            width="58"
+            height="34"
+            rx="17"/>
+
+          <rect
+            x="128"
+            y="88"
+            width="30"
+            height="70"
+            rx="15"/>
+
+        </g>
+
+
+        <g
+          stroke="#dff0d9"
+          stroke-width="2">
+
+          <path d="M72 55h9"/>
+          <path d="M72 82h9"/>
+          <path d="M72 110h9"/>
+          <path d="M72 138h9"/>
+          <path d="M72 166h9"/>
+          <path d="M38 103h8"/>
+          <path d="M134 129h8"/>
+
+        </g>
+
+      </svg>
+
+
+      <div
+        class="result"
+        id="cactusResult">
+
+        O que será que acontece com as folhas do cacto?
+
+      </div>
+
+    </div>
+
+
+    <!-- ANIMAIS -->
+
+    <div class="interactive">
+
+      <h3>
+        Observe o comportamento dos animais
+      </h3>
+
+
+      <div
+        class="animal-scene"
+        id="animalScene">
+
+        <svg
+          class="animals-illus"
+          viewBox="0 0 360 130"
+          aria-label="Animais do deserto">
+
+          <g
+            fill="none"
+            stroke="#6f4b32"
+            stroke-width="5"
+            stroke-linecap="round">
+
+            <path
+              d="M50 90c12-25 42-25 54 0M74 90V58M52 90l-8 15M102 90l8 15"/>
+
+            <path
+              d="M170 92c-15-30 10-55 35-35 16 13 7 35-15 35zM198 57l12-12M207 54l9 4"/>
+
+            <path
+              d="M278 92c-10-34 13-50 36-31 14 12 8 31-12 31M290 61l-6-15M307 64l9-12"/>
+
+          </g>
+
+
+          <circle
+            cx="94"
+            cy="66"
+            r="3"
+            fill="#3b2a1d"/>
+
+          <circle
+            cx="193"
+            cy="68"
+            r="3"
+            fill="#3b2a1d"/>
+
+          <circle
+            cx="309"
+            cy="68"
+            r="3"
+            fill="#3b2a1d"/>
+
+        </svg>
+
+
+        <div
+          class="animal-text"
+          id="animalText">
+
+          Durante o dia, muitos animais permanecem protegidos
+          em tocas ou enterrados.
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="action"
+        onclick="toggleAnimal()">
+
+        TROCAR DIA/NOITE
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="nav">
+
+    <button onclick="goTo(3)">
+      VOLTAR
+    </button>
+
+    <button onclick="goTo(5)">
+      PRÓXIMA SEÇÃO
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     SEÇÃO 5
+===================================================== -->
+
+<section class="page" id="page5">
+
+  <div class="header">
+
+    <span class="badge">
+      SEÇÃO 5/5 • CAMELOS
+    </span>
+
+    <h2>
+      Os camelos e suas adaptações
+    </h2>
+
+    <p class="subtitle">
+      Características que ajudam esses animais a viver em condições desérticas.
+    </p>
+
+  </div>
+
+
+  <div class="content">
+
+    <p class="text">
+      Os camelos também apresentam adaptações ao clima desértico.
+      Eles possuem <strong>menos glândulas sudoríparas</strong>
+      e conseguem regular a temperatura do próprio corpo.
+      Dessa forma, conseguem evitar uma perda excessiva de água
+      pela transpiração.
+    </p>
+
+    <p class="text">
+      As corcovas dos camelos também são importantes.
+      Elas são grandes <strong>reservatórios de gordura</strong>.
+      Essa gordura fornece nutrientes fundamentais para a
+      sobrevivência do animal durante períodos de escassez
+      de alimento, permitindo que ele passe dias sem precisar
+      se alimentar.
+    </p>
+
+
+    <div class="interactive">
+
+      <h3>
+        Explore o camelo
+      </h3>
+
+
+      <svg
+        class="camel-illus"
+        onclick="camelTip('corcova')"
+        viewBox="0 0 330 190"
+        role="img"
+        aria-label="Camelo ilustrado">
+
+        <g
+          fill="#b9783f"
+          stroke="#7d4d2b"
+          stroke-width="3">
+
+          <ellipse
+            cx="145"
+            cy="112"
+            rx="80"
+            ry="38"/>
+
+          <path
+            d="M194 93c4-45 23-70 50-66 18 3 25 17 19 31-7 16-28 13-39 4l-9 42z"/>
+
+          <path
+            d="M238 34c13-9 27-8 34 1-7 4-16 7-26 5z"/>
+
+          <ellipse
+            cx="137"
+            cy="80"
+            rx="28"
+            ry="25"/>
+
+          <path
+            d="M91 140l-8 38M139 142l-4 39M184 138l9 39M218 128l15 34"
+            fill="none"
+            stroke-linecap="round"
+            stroke-width="8"/>
+
+          <path
+            d="M112 80c12-24 31-24 45 0"
+            fill="none"/>
+
+        </g>
+
+
+        <circle
+          cx="257"
+          cy="38"
+          r="3"
+          fill="#2f251e"/>
+
+        <path
+          d="M279 54l14 2"
+          stroke="#7d4d2b"
+          stroke-width="3"/>
+
+      </svg>
+
+
+      <button
+        class="action"
+        onclick="camelTip('suor')">
+
+        MENOS GLÂNDULAS
+
+      </button>
+
+
+      <button
+        class="action secondary"
+        onclick="camelTip('gordura')">
+
+        CORCOVA
+
+      </button>
+
+
+      <button
+        class="action"
+        onclick="camelTip('temperatura')">
+
+        TEMPERATURA
+
+      </button>
+
+
+      <div
+        class="result"
+        id="camelResult">
+
+        Toque no camelo ou nos botões para explorar.
+
+      </div>
+
+    </div>
+
+
+    <div class="tip">
+
+      <strong>Atenção:</strong>
+
+      as corcovas armazenam
+      <strong>gordura</strong>, não água.
+
+      Essa gordura pode fornecer nutrientes
+      em períodos de escassez de alimento.
+
+    </div>
+
+
+    <div class="interactive">
+
+      <h3>
+        Você chegou ao final do conteúdo!
+      </h3>
+
+      <p>
+        Agora que você já conhece as principais características
+        apresentadas no trabalho, está na hora de testar seus
+        conhecimentos.
+      </p>
+
+      <button
+        class="action"
+        onclick="goTo(6)">
+
+        IR PARA O QUIZ
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="nav">
+
+    <button onclick="goTo(4)">
+      VOLTAR
+    </button>
+
+    <button onclick="goTo(6)">
+      IR PARA O QUIZ
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     QUIZ FINAL
+===================================================== -->
+
+<section
+  class="page quiz"
+  id="page6">
+
+  <div class="header">
+
+    <span class="badge">
+      QUIZ FINAL • 10 QUESTÕES
+    </span>
+
+    <h2>
+      Desafio do Explorador
+    </h2>
+
+    <p class="subtitle">
+      Escolha uma alternativa em cada questão.
+    </p>
+
+
+    <div class="quizbar">
+
+      <div id="quizProgress"></div>
+
+    </div>
+
+
+    <b id="quizProgressText">
+      0/10 respondidas
+    </b>
+
+  </div>
+
+
+  <div class="content">
+
+    <div id="quizBox"></div>
+
+
+    <div
+      class="score"
+      id="scoreBox">
+
+      <div
+        class="stars"
+        id="stars">
+      </div>
+
+      <h2 id="scoreTitle"></h2>
+
+      <p id="scoreText"></p>
+
+
+      <button
+        class="action"
+        onclick="restartQuiz()">
+
+        TENTAR NOVAMENTE
+
+      </button>
+
+
+      <button
+        class="action secondary"
+        onclick="goTo(0)">
+
+        VOLTAR AO SITE
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="nav">
+
+    <button onclick="goTo(5)">
+      VOLTAR
+    </button>
+
+    <button onclick="finishQuiz()">
+      FINALIZAR QUIZ
+    </button>
+
+  </div>
+
+</section>
+
+</div>
+
+
+<!-- =====================================================
+     RODAPÉ
+===================================================== -->
+
+<footer>
+professora: solange<br>
+Turma: 8° B
+</footer>
+
+
+<div
+  class="toast"
+  id="toast">
+</div>
+
+
+<script>
+
+/* =====================================================
+   VARIÁVEIS
+===================================================== */
+
+let current=0;
+
+let soundOn=false;
+
+let audioCtx=null;
+
+let windGain=null;
+
+let windSource=null;
+
+let explored=new Set();
+
+let quizAnswers=new Array(10).fill(null);
+
+
+/* =====================================================
+   NAVEGAÇÃO
+===================================================== */
+
+function goTo(n){
+
+  if(n<0)n=0;
+
+  if(n>6)n=6;
+
+  document
+    .querySelectorAll('.page')
+    .forEach(p=>p.classList.remove('active'));
+
+  document
+    .getElementById('page'+n)
+    .classList.add('active');
+
+  current=n;
+
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
+
+  document
+    .getElementById('progressTop')
+    .style.width=((n/6)*100)+'%';
+
+  if(n===6){
+    renderQuiz();
+  }
+
+}
+
+
+/* =====================================================
+   SEÇÃO 1 — CLIMA
+===================================================== */
+
+function showInfo(type){
+
+  const data={
+
+    chuva:
+      'Os desertos possuem pouca precipitação, podendo chegar a apenas 200 mm ao longo do ano.',
+
+    umidade:
+      'O ar dos desertos apresenta baixa umidade, uma característica importante do clima desértico.',
+
+    nuvens:
+      'A ausência de umidade contribui para a pouca formação de nuvens.',
+
+    radiacao:
+      'Com poucas nuvens, a radiação solar consegue atingir diretamente o solo durante o dia.'
+
+  };
+
+  document
+    .getElementById('climateResult')
+    .textContent=data[type];
+
+  showToast('Informação descoberta!');
+
+}
+
+
+/* =====================================================
+   SEÇÃO 2 — DIA E NOITE
+===================================================== */
+
+let isNight=false;
+
+
+function toggleDay(){
+
+  isNight=!isNight;
+
+  const scene=
+    document.getElementById('scene');
+
+  scene.classList.toggle(
+    'night',
+    isNight
+  );
+
+
+  document
+    .getElementById('sunmoon')
+    .innerHTML=isNight
+
+    ?
+
+    '<circle cx="60" cy="60" r="21" fill="#e8edf7"/>'+
+    '<circle cx="70" cy="52" r="21" fill="#101c48"/>'
+
+    :
+
+    '<circle cx="60" cy="60" r="25" fill="#f5b83d"/>'+
+    '<g stroke="#e09b2d" stroke-width="6" stroke-linecap="round">'+
+    '<path d="M60 8v18"/>'+
+    '<path d="M60 94v18"/>'+
+    '<path d="M8 60h18"/>'+
+    '<path d="M94 60h18"/>'+
+    '<path d="M23 23l13 13"/>'+
+    '<path d="M84 84l13 13"/>'+
+    '<path d="M97 23L84 36"/>'+
+    '<path d="M36 84L23 97"/>'+
+    '</g>';
+
+
+  document
+    .getElementById('tempResult')
+    .textContent=isNight
+
+    ?
+
+    'À noite, uma grande quantidade de calor pode se perder para a atmosfera, fazendo a temperatura chegar a 0 °C ou menos.'
+
+    :
+
+    'Durante o dia, os desertos podem atingir temperaturas médias de aproximadamente 50 °C.';
+
+
+  document
+    .getElementById('thermoFill')
+    .style.width=isNight
+      ?'12%'
+      :'85%';
+
+}
+
+
+function showTemp(){
+
+  document
+    .getElementById('tempResult')
+    .innerHTML=
+      '<strong>Diferença:</strong> dia ≈ 50 °C • noite = 0 °C ou menos.';
+
+  showToast(
+    'Observe como a diferença pode ser grande!'
+  );
+
+}
+
+
+/* =====================================================
+   SEÇÃO 3 — MAPA DO SAARA
+===================================================== */
+
+function mapPoint(where){
+
+  if(!explored.has(where)){
+
+    explored.add(where);
+
+    const pct=
+      Math.round(
+        explored.size/3*100
+      );
+
+    document
+      .getElementById('mapProgress')
+      .style.width=pct+'%';
+
+    document
+      .getElementById('mapCount')
+      .textContent=
+        explored.size+'/3';
+
+  }
+
+
+  const info={
+
+    saara:
+      'Você encontrou o Saara! Ele é apresentado no conteúdo como o maior deserto do mundo.',
+
+    atlantico:
+      'Este ponto representa a faixa atlântica da África, uma das extremidades citadas no texto.',
+
+    arabia:
+      'Este ponto representa a direção da península Arábica, até onde se estende a área mencionada.'
+
+  };
+
+
+  document
+    .getElementById('saharaInfo')
+    .textContent=info[where];
+
+  showToast(
+    'Ponto explorado!'
+  );
+
+}
+
+
+/* =====================================================
+   SEÇÃO 4 — CACTO
+===================================================== */
+
+function cactusTip(){
+
+  document
+    .getElementById('cactusResult')
+    .innerHTML=
+      'As folhas do cacto são modificadas em <strong>espinhos</strong>, ajudando a reduzir a perda de água pela transpiração. Já os caules suculentos armazenam água.';
+
+  showToast(
+    'Adaptação descoberta!'
+  );
+
+}
+
+
+/* =====================================================
+   SEÇÃO 4 — ANIMAIS
+===================================================== */
+
+let animalNight=false;
+
+
+function toggleAnimal(){
+
+  animalNight=!animalNight;
+
+  const s=
+    document.getElementById('animalScene');
+
+  s.classList.toggle(
+    'night',
+    animalNight
+  );
+
+
+  s.querySelector(
+    '.animal-text'
+  ).textContent=animalNight
+
+    ?
+
+    'À noite, animais com hábitos noturnos podem sair em busca de alimento, quando as temperaturas estão mais baixas.'
+
+    :
+
+    'Durante o dia, alguns animais permanecem em tocas ou enterrados para enfrentar as condições do ambiente.';
+
+
+  s.querySelector(
+    '.animals-illus'
+  ).style.transform=
+    animalNight
+      ?'scale(1.04)'
+      :'scale(1)';
+
+}
+
+
+/* =====================================================
+   SEÇÃO 5 — CAMELO
+===================================================== */
+
+function camelTip(type){
+
+  const data={
+
+    corcova:
+      'As corcovas são grandes reservatórios de gordura. Essa gordura fornece nutrientes durante períodos de escassez de alimento.',
+
+    suor:
+      'Os camelos possuem menos glândulas sudoríparas, ajudando a evitar a perda de água pela transpiração.',
+
+    gordura:
+      'A corcova armazena gordura, e não água. Essa reserva ajuda o animal quando há pouca disponibilidade de alimento.',
+
+    temperatura:
+      'Os camelos conseguem regular sua temperatura corpórea para evitar perda excessiva de água pela transpiração.'
+
+  };
+
+
+  document
+    .getElementById('camelResult')
+    .textContent=data[type];
+
+  showToast(
+    'Nova adaptação descoberta!'
+  );
+
+}
+
+
+/* =====================================================
+   SOM AMBIENTE
+===================================================== */
+
+function toggleSound(){
+
+  if(!soundOn){
+
+    startAmbientSound();
+
+  }else{
+
+    stopAmbientSound();
+
+  }
+
+}
+
+
+async function startAmbientSound(){
+
+  try{
+
+    const AC=
+      window.AudioContext ||
+      window.webkitAudioContext;
+
+    if(!AC){
+
+      showToast(
+        'Seu navegador não suporta o som ambiente.'
+      );
+
+      return;
+
+    }
+
+
+    if(!audioCtx){
+
+      audioCtx=new AC();
+
+    }
+
+
+    if(audioCtx.state==='suspended'){
+
+      await audioCtx.resume();
+
+    }
+
+
+    const bufferSize=
+      audioCtx.sampleRate*2;
+
+
+    const buffer=
+      audioCtx.createBuffer(
+        1,
+        bufferSize,
+        audioCtx.sampleRate
+      );
+
+
+    const data=
+      buffer.getChannelData(0);
+
+
+    for(
+      let i=0;
+      i<bufferSize;
+      i++
+    ){
+
+      data[i]=
+        (Math.random()*2-1)*0.7;
+
+    }
+
+
+    windSource=
+      audioCtx.createBufferSource();
+
+    windSource.buffer=buffer;
+
+    windSource.loop=true;
+
+
+    const filter=
+      audioCtx.createBiquadFilter();
+
+    filter.type='lowpass';
+
+    filter.frequency.value=850;
+
+    filter.Q.value=.7;
+
+
+    windGain=
+      audioCtx.createGain();
+
+    windGain.gain.setValueAtTime(
+      .0001,
+      audioCtx.currentTime
+    );
+
+
+    windGain.gain.exponentialRampToValueAtTime(
+      .045,
+      audioCtx.currentTime+1.2
+    );
+
+
+    windSource.connect(filter);
+
+    filter.connect(windGain);
+
+    windGain.connect(
+      audioCtx.destination
+    );
+
+
+    windSource.start();
+
+
+    soundOn=true;
+
+
+    document
+      .getElementById('soundBtn')
+      .textContent='SOM ON';
+
+
+    showToast(
+      'Som ambiente do deserto ativado'
+    );
+
+
+  }catch(e){
+
+    showToast(
+      'Não foi possível iniciar o som neste navegador.'
+    );
+
+  }
+
+}
+
+
+function stopAmbientSound(){
+
+  if(
+    windGain &&
+    audioCtx
+  ){
+
+    windGain.gain.cancelScheduledValues(
+      audioCtx.currentTime
+    );
+
+
+    windGain.gain.exponentialRampToValueAtTime(
+      .0001,
+      audioCtx.currentTime+.5
+    );
+
+
+    setTimeout(()=>{
+
+      try{
+
+        if(windSource)
+          windSource.stop();
+
+      }catch(e){}
+
+
+      windSource=null;
+
+    },600);
+
+  }
+
+
+  soundOn=false;
+
+
+  document
+    .getElementById('soundBtn')
+    .textContent='SOM';
+
+
+  showToast(
+    'Som ambiente desligado.'
+  );
+
+}
+
+
+/* =====================================================
+   AVISOS
+===================================================== */
+
+function showToast(msg){
+
+  const t=
+    document.getElementById('toast');
+
+  t.textContent=msg;
+
+  t.classList.add('show');
+
+  clearTimeout(
+    window.toastTimer
+  );
+
+  window.toastTimer=
+    setTimeout(
+      ()=>t.classList.remove('show'),
+      2300
+    );
+
+}
+
+
+/* =====================================================
+   QUIZ
+===================================================== */
+
+const questions=[
+
+  {
+    q:'Em quais continentes os desertos podem ser encontrados, segundo o conteúdo?',
+    o:[
+      'Em todos os continentes, exceto a Antártida',
+      'Somente na África',
+      'Somente na Ásia e África',
+      'Apenas na América'
+    ],
+    a:0
+  },
+
+  {
+    q:'Qual pode ser o índice de precipitação dos desertos ao longo do ano?',
+    o:[
+      '200 mm',
+      '2.000 mm',
+      '20.000 mm',
+      '500 mm por mês'
+    ],
+    a:0
+  },
+
+  {
+    q:'Qual é o maior deserto do mundo citado no conteúdo?',
+    o:[
+      'Saara',
+      'Atacama',
+      'Gobi',
+      'Kalahari'
+    ],
+    a:0
+  },
+
+  {
+    q:'Qual temperatura média os dias nos desertos podem atingir?',
+    o:[
+      '10 °C',
+      '25 °C',
+      '50 °C',
+      '100 °C'
+    ],
+    a:2
+  },
+
+  {
+    q:'Durante a noite, a temperatura dos desertos pode chegar a:',
+    o:[
+      '50 °C ou mais',
+      '0 °C ou menos',
+      '30 °C exatamente',
+      'Nunca muda'
+    ],
+    a:1
+  },
+
+  {
+    q:'O que acontece com as folhas dos cactos?',
+    o:[
+      'Viraram flores',
+      'Foram modificadas em espinhos',
+      'Ficam maiores',
+      'Armazenam gordura'
+    ],
+    a:1
+  },
+
+  {
+    q:'Onde os cactos armazenam água?',
+    o:[
+      'Nos espinhos',
+      'Nas flores',
+      'Nos caules suculentos',
+      'Nas raízes apenas'
+    ],
+    a:2
+  },
+
+  {
+    q:'Por que alguns animais procuram alimento à noite?',
+    o:[
+      'Porque a temperatura é mais baixa',
+      'Porque não existe alimento durante o dia',
+      'Porque precisam de luz',
+      'Porque não podem viver em tocas'
+    ],
+    a:0
+  },
+
+  {
+    q:'O que as corcovas dos camelos armazenam?',
+    o:[
+      'Água',
+      'Areia',
+      'Gordura',
+      'Ar'
+    ],
+    a:2
+  },
+
+  {
+    q:'Para que serve a gordura das corcovas em períodos de escassez de alimento?',
+    o:[
+      'Fornecer nutrientes fundamentais',
+      'Produzir água diretamente',
+      'Aumentar a temperatura',
+      'Criar areia'
+    ],
+    a:0
+  }
+
+];
+
+
+function renderQuiz(){
+
+  const box=
+    document.getElementById('quizBox');
+
+  box.innerHTML='';
+
+
+  questions.forEach(
+    (item,i)=>{
+
+      const div=
+        document.createElement('div');
+
+      div.className='question';
+
+
+      div.innerHTML=
+        '<h3>'+
+        (i+1)+
+        '. '+
+        item.q+
+        '</h3>';
+
+
+      item.o.forEach(
+        (opt,j)=>{
+
+          const b=
+            document.createElement('button');
+
+          b.className='option';
+
+          b.textContent=
+            String.fromCharCode(65+j)+
+            ') '+
+            opt;
+
+
+          b.onclick=()=>{
+            answerQuiz(i,j)
+          };
+
+
+          if(
+            quizAnswers[i]!==null
+          ){
+
+            b.disabled=true;
+
+
+            if(
+              j===item.a
+            ){
+
+              b.classList.add(
+                'correct'
+              );
+
+            }
+
+
+            if(
+              j===quizAnswers[i] &&
+              j!==item.a
+            ){
+
+              b.classList.add(
+                'wrong'
+              );
+
+            }
+
+          }
+
+
+          div.appendChild(b);
+
+        }
+      );
+
+
+      box.appendChild(div);
+
+    }
+  );
+
+
+  updateQuizProgress();
+
+}
+
+
+function answerQuiz(i,j){
+
+  if(
+    quizAnswers[i]!==null
+  ){
+
+    return;
+
+  }
+
+
+  quizAnswers[i]=j;
+
+  renderQuiz();
+
+
+  showToast(
+    j===questions[i].a
+      ?'Acertou!'
+      :'Quase! Veja a resposta correta.'
+  );
+
+}
+
+
+function updateQuizProgress(){
+
+  const n=
+    quizAnswers.filter(
+      x=>x!==null
+    ).length;
+
+
+  document
+    .getElementById('quizProgress')
+    .style.width=
+      (n/10*100)+'%';
+
+
+  document
+    .getElementById('quizProgressText')
+    .textContent=
+      n+'/10 respondidas';
+
+}
+
+
+function finishQuiz(){
+
+  const answered=
+    quizAnswers.filter(
+      x=>x!==null
+    ).length;
+
+
+  if(answered<10){
+
+    showToast(
+      'Responda as 10 questões antes de finalizar!'
+    );
+
+    return;
+
+  }
+
+
+  let score=0;
+
+
+  questions.forEach(
+    (q,i)=>{
+
+      if(
+        quizAnswers[i]===q.a
+      ){
+
+        score++;
+
+      }
+
+    }
+  );
+
+
+  const box=
+    document.getElementById('scoreBox');
+
+
+  box.style.display='block';
+
+
+  document
+    .getElementById('stars')
+    .textContent=
+      ''.repeat(
+        score>=9
+          ?5
+          :score>=7
+            ?4
+            :score>=5
+              ?3
+              :score>=3
+                ?2
+                :1
+      );
+
+
+  document
+    .getElementById('scoreTitle')
+    .textContent=
+      'Você fez '+score+'/10!';
+
+
+  let msg='';
+
+
+  if(score===10){
+
+    msg=
+      'Excelente! Você dominou a expedição pelo deserto!';
+
+  }else if(score>=8){
+
+    msg=
+      'Muito bem! Você aprendeu bastante sobre os desertos.';
+
+  }else if(score>=6){
+
+    msg=
+      'Bom trabalho! Mais uma leitura e você pode melhorar ainda mais.';
+
+  }else{
+
+    msg=
+      'Continue explorando o conteúdo e tente novamente!';
+
+  }
+
+
+  document
+    .getElementById('scoreText')
+    .textContent=msg;
+
+
+  box.scrollIntoView({
+    behavior:'smooth',
+    block:'center'
+  });
+
+}
+
+
+function restartQuiz(){
+
+  quizAnswers=
+    new Array(10).fill(null);
+
+
+  document
+    .getElementById('scoreBox')
+    .style.display='none';
+
+
+  renderQuiz();
+
+
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
+
+}
+
+
+/* =====================================================
+   TECLADO
+===================================================== */
+
+document.addEventListener(
+  'keydown',
+  e=>{
+
+    if(e.key==='ArrowRight'){
+
+      goTo(current+1);
+
+    }
+
+
+    if(e.key==='ArrowLeft'){
+
+      goTo(current-1);
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   TOQUE / DESLIZE
+===================================================== */
+
+let touchStartX=0;
+
+
+document.addEventListener(
+  'touchstart',
+  e=>{
+
+    touchStartX=
+      e.changedTouches[0].screenX;
+
+  },
+  {passive:true}
+);
+
+
+document.addEventListener(
+  'touchend',
+  e=>{
+
+    const dx=
+      e.changedTouches[0].screenX-
+      touchStartX;
+
+
+    if(Math.abs(dx)>70){
+
+      if(dx<0){
+
+        goTo(current+1);
+
+      }else{
+
+        goTo(current-1);
+
+      }
+
+    }
+
+  },
+  {passive:true}
+);
+
+
+/* INICIAR */
+
+goTo(0);
+
+</script>
+
+</body>
+</html>
